@@ -65,9 +65,19 @@ class Home extends React.Component {
         if(!this.state.pinned_items.length)
             return null;
 
-        return(
-            <Card updateScreen={this.props.updateScreen}/>
-        );
+            return this.state.feed_items.map((item, i) => {
+                return (
+                    <Card
+                        key={i}
+                        updateScreen={this.props.updateScreen}
+                        category={item.sectionName}
+                        thumbnail={item.fields && item.fields.thumbnail}
+                        title={item.webTitle}
+                        body={item.fields && item.fields.body}
+                        id={item.id}
+                    />
+                )
+            });
     }
 
     renderFeedItems = () => {
@@ -82,6 +92,7 @@ class Home extends React.Component {
                     category={item.sectionName}
                     thumbnail={item.fields && item.fields.thumbnail}
                     title={item.webTitle}
+                    body={item.fields && item.fields.body}
                     id={item.id}
                 />
             )

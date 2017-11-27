@@ -32,7 +32,7 @@ class Card extends React.Component {
                 <View style={styles.tittle}>
                     <Text style={{fontSize: responsiveHeight(5)}}>{this.props.title}</Text>
                 </View>
-                <TouchableOpacity style={styles.image} resizeMode={'contain'} onPress={this.handleOnPress.bind(this)}>
+                <TouchableOpacity style={styles.image} resizeMode={'contain'} onPress={this.handleOnPress()}>
                 <Image style={styles.image} source={{uri: this.props.thumbnail}}/>
                 </TouchableOpacity>
                 <View style={styles.category}>
