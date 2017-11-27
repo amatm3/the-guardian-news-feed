@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView, Image, WebView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Image, WebView, TouchableOpacity} from 'react-native';
 import {
     responsiveHeight,
     responsiveWidth,
@@ -22,11 +22,14 @@ class Article extends React.Component {
             <Text fontSize={responsiveFontSize(5)}>{this.props.params.title}</Text>
 
             </View>
-            <Image source={{uri: this.props.params.thumbnail}} style={{height: responsiveWidth(80), width: responsiveWidth(80)}}/>
-            <TouchableOpacity style={styles.pin} onPress={this.handleOnPressPin()/}>
-
+            <View>
+            <Image source={{uri: this.props.params.thumbnail}} style={{marginTop: responsiveHeight(2), height: responsiveWidth(80), width: responsiveWidth(80)}}/>
+            <TouchableOpacity style={styles.pin} onPress={this.handleOnPressPin()}/>
+            </View>
             <WebView
             source={{html: this.props.params.body}}
+            style={{height: responsiveHeight(50),
+            width: responsiveWidth(90),}}
             />
 
             </View>
@@ -45,6 +48,12 @@ const styles = StyleSheet.create({
         marginTop: responsiveHeight(3),
         width: responsiveWidth(100),
         height: responsiveHeight(3),
+    },
+    pin: {
+        marginTop: responsiveHeight(2),
+        width: responsiveWidth(80),
+        height: responsiveHeight(4),
+        backgroundColor: 'red'
     }
 });
 
