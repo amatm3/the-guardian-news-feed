@@ -1,10 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, AsyncStorage} from 'react-native';
 
 import Home from './src/components/home.js';
 import Article from './src/components/article.js';
 import AppConstants from './src/core/constants.js';
-import Card from './src/components/card.js'
 
 export default class App extends React.Component {
     constructor() {
@@ -21,7 +19,7 @@ export default class App extends React.Component {
         this.renderers[AppConstants.screens.ARTICLE] = this.renderArticle;
     }
 
-    updateScreen = (screen, params, jump_to_screen) => {
+    updateScreen = (screen, params) => {
         params = params || {};
         let screens = this.state.screens;
         if (screen == AppConstants.screens.BACK_PRESSED) {
@@ -51,53 +49,29 @@ export default class App extends React.Component {
         });
     }
 
-    updateCurrentScreenParams = (screen_name, params) => {
-        if (!this.state.screens || !this.state.screens.length)  {
-            return null;
+    render() {
+        let screens = this.state.screens;
+        let current_screen = {
+            name: AppConstants.screens.HOME,
+            params: null
+        };
+        if (screens && screens.length) {
+            current_screen = screens[screens.length - 1];
         }
-        let current_screen = this.state.screens[this.state.screens.length - 1];
-        for (let ix = 0; ix < this.state.screens.length; ++ix) {
-            if (this.state.screens[ix].name === screen_name) {
-                Object.keys(params).map(k => {
-                    this.state.screens[ix].params[k] = params[k];
-                });
-                break;
-            }
-        }
+
+        return this.renderers[current_screen.name](current_screen.params);
     }
 
-  render() {
-      let screens = this.state.screens;
-      let current_screen = {
-          name: AppConstants.screens.HOME,
-          params: null
-      };
-      if (screens && screens.length) {
-          current_screen = screens[screens.length - 1];
-      }
+    renderHome = (params) => {
+        return (
+            <Home updateScreen={this.updateScreen} params={params} />
+        );
+    }
 
-      return this.renderers[current_screen.name](current_screen.params);
-  }
-
-  renderHome = (params) => {
-      return (
-          <Home updateScreen={this.updateScreen} updateCurrentScreenParams={this.updateCurrentScreenParams} params={params} />
-      );
-  }
-
-  renderArticle = (params) => {
-      return (
-          <Article updateScreen={this.updateScreen} updateCurrentScreenParams={this.updateCurrentScreenParams} params={params} />
-      );
-  }
+    renderArticle = (params) => {
+        return (
+            <Article updateScreen={this.updateScreen} params={params} />
+        );
+    }
 
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

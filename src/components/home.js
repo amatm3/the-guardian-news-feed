@@ -1,6 +1,13 @@
 
 import React from 'react';
-import {StyleSheet, Text, View, ScrollView, Image, Platform} from 'react-native'
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    Image,
+    Platform
+} from 'react-native'
 
 import {
     responsiveHeight,
@@ -13,14 +20,12 @@ import NetworkService from './../core/network.js';
 import StorageService from './../core/storage.js';
 import AppConstants from './../core/constants';
 
-var count= 0;
-
 class Home extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.offset = 0;
+        this.offset = 1;
         this.state = {
             pinned_items: [],
             feed_items: []
@@ -29,14 +34,17 @@ class Home extends React.Component {
 
     componentDidMount() {
         this.requestFeedItems();
-        setInterval(() => {
+        this.request_timer = setInterval(() => {
             this.requestFeedItems(1);
         }, 30000);
     }
 
-    requestFeedItems = (page) => {
+    componentWillUnmount() {
+        clearInterval(this.request_timer);
+    }
+
+    requestFeedItems = (page, append) => {
         StorageService.getPinnedItem().then(p => {
-            console.log('StorageService p == ', p);
             this.setState({
                 pinned_items: p
             });
@@ -47,83 +55,101 @@ class Home extends React.Component {
             }
             return NetworkService.makeAPIGetRequest(AppConstants.API_BASE_URL, options);
         }).then(data => {
+
             if (!data || !data.response || !data.response.results){
                 return this.setState({
                     feed_items: []
                 })
             }
-            this.setState({
-                feed_items: data.response.results
-            });
+
+            if (append) {
+                this.setState({
+                    feed_items: this.state.feed_items.concat(data.response.results)
+                });
+            } else {
+                this.setState({
+                    feed_items: data.response.results
+                });
+            }
         }).catch(err => {
             console.log('err == ', err);
         });
     }
 
-
     renderPinnedItems = () => {
         if(!this.state.pinned_items.length)
-            return null;
+        return null;
 
-            return this.state.feed_items.map((item, i) => {
-                return (
-                    <Card
-                        key={i}
-                        updateScreen={this.props.updateScreen}
-                        category={item.sectionName}
-                        thumbnail={item.fields && item.fields.thumbnail}
-                        title={item.webTitle}
-                        body={item.fields && item.fields.body}
-                        id={item.id}
-                    />
-                )
-            });
+        return this.state.pinned_items.map((item, i) => {
+            return (
+                <Card
+                key={i}
+                updateScreen={this.props.updateScreen}
+                category={item.category}
+                thumbnail={item.thumbnail}
+                title={item.title}
+                body={item.body}
+                id={item.id}
+                height={responsiveWidth(30)}
+                width={responsiveWidth(30)}
+                />
+            );
+        });
+
     }
 
     renderFeedItems = () => {
         if(!this.state.feed_items.length)
-            return null;
+        return null;
 
         return this.state.feed_items.map((item, i) => {
             return (
                 <Card
-                    key={i}
-                    updateScreen={this.props.updateScreen}
-                    category={item.sectionName}
-                    thumbnail={item.fields && item.fields.thumbnail}
-                    title={item.webTitle}
-                    body={item.fields && item.fields.body}
-                    id={item.id}
+                key={i}
+                updateScreen={this.props.updateScreen}
+                category={item.sectionName}
+                thumbnail={item.fields && item.fields.thumbnail}
+                title={item.webTitle}
+                body={item.fields && item.fields.body}
+                id={item.id}
+                height={responsiveWidth(80)}
+                width={responsiveWidth(80)}
                 />
-            )
+            );
         });
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <ScrollView horizontal = {true } style={styles.pinned_view}>
-                    {this.renderPinnedItems()}
-                </ScrollView>
-                <ScrollView>
-                    {this.renderFeedItems()}
-                </ScrollView>
-                <Text> News </Text>
+            <ScrollView horizontal = {true}>
+            {this.renderPinnedItems()}
+            </ScrollView>
+            <View style={styles.feed}>
+            <Text style={styles.feedText}>{'The Guardian News'}</Text>
+            </View>
+            <ScrollView onMomentumScrollEnd={() => this.requestFeedItems(++this.offset, true)}>
+            {this.renderFeedItems()}
+            </ScrollView>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pinned_view: {
-
-  }
+    container: {
+        marginTop: responsiveHeight(2.5),
+        backgroundColor: 'grey',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    feed: {
+        backgroundColor: 'green',
+        width: responsiveWidth(100),
+        height: responsiveHeight(3),
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
 });
 
-export default Home;
+module.exports = Home;

@@ -1,5 +1,11 @@
 import React from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    TouchableOpacity,
+    Image
+} from 'react-native';
 
 import {
     responsiveHeight,
@@ -18,10 +24,10 @@ class Card extends React.Component {
 
     render() {
         const { image } = styles;
-        if(this.props.height) {
+        if (this.props.height) {
             image.height = this.props.height;
         }
-        if(this.props.width) {
+        if (this.props.width) {
             image.width = this.props.width;
         }
         if (!this.props.thumbnail) {
@@ -29,15 +35,15 @@ class Card extends React.Component {
         }
         return(
             <View style={styles.container}>
-                <View style={styles.tittle}>
-                    <Text style={{fontSize: responsiveHeight(5)}}>{this.props.title}</Text>
-                </View>
-                <TouchableOpacity style={styles.image} resizeMode={'contain'} onPress={this.handleOnPress()}>
-                <Image style={styles.image} source={{uri: this.props.thumbnail}}/>
-                </TouchableOpacity>
-                <View style={styles.category}>
-                    <Text style={{ fontSize: responsiveHeight(5)}}>{this.props.category}</Text>
-                </View>
+            <View>
+            <Text style={styles.categoryText}>{this.props.category}</Text>
+            </View>
+            <TouchableOpacity style={styles.image} onPress={this.handleOnPress}>
+            <Image style={styles.image} source={{uri: this.props.thumbnail}}/>
+            </TouchableOpacity>
+            <View style={styles.titleView}>
+            <Text style={styles.titleText}>{this.props.title}</Text>
+            </View>
             </View>
         );
     }
@@ -46,25 +52,27 @@ class Card extends React.Component {
 const styles = {
     container: {
         marginTop: responsiveHeight(2.5),
-        height: responsiveWidth(90),
+        height: responsiveWidth(100),
+        width: responsiveWidth(100),
+        alignItems: 'center'
+    },
+    titleView: {
+        marginTop: responsiveHeight(1),
+        height: responsiveHeight(2),
         width: responsiveWidth(90),
-        alignItems: 'center',
+        alignItems: 'center'
+    },
+    titleText: {
+        fontSize: responsiveFontSize(2)
     },
     image: {
-        marginTop: responsiveHeight(2),
+        marginTop: responsiveHeight(0.5),
         height:responsiveWidth(80),
         width:responsiveWidth(80)
     },
-    tittle: {
-        borderColor: 'red',
-        height: responsiveHeight(2),
-        width: responsiveWidth(80),
-    },
-    category: {
-        marginTop: responsiveHeight(2),
-
+    categoryText: {
+        fontSize: responsiveFontSize(3)
     }
-
 };
 
-export default Card;
+module.exports = Card;

@@ -1,8 +1,9 @@
+import React from 'react';
 import {Platform} from 'react-native';
 
 import AppConstants from './constants.js'
 
-class NetworkService {
+class NetworkService extends React.Component {
 
     makeAPIRequest = (url, options) => {
         return new Promise((resolve, reject) => {
@@ -26,7 +27,7 @@ class NetworkService {
             if (!options.method) {
                 options.method = AppConstants.network_request_methods.GET;
             }
-
+            
             let fetch_options = {
                 method: options.method,
                 headers: options.headers || {
@@ -59,7 +60,6 @@ class NetworkService {
         });
     }
 
-
     makeAPIGetRequest = (url, options) => {
         if (!url) return null;
         options = options || {};
@@ -70,7 +70,5 @@ class NetworkService {
     }
 
 }
-
-
 
 module.exports = new NetworkService();

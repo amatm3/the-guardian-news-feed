@@ -1,7 +1,8 @@
 const AppConstants = {
     screens: {
         HOME: 'home',
-        ARTICLE: 'article'
+        ARTICLE: 'article',
+        BACK_PRESSED: 'back_pressed'
     },
     NetworkErrors : {
         NO_NETWORK: 'no_network',
