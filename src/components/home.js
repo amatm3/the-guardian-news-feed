@@ -15,7 +15,8 @@ import {
     responsiveFontSize
 } from 'react-native-responsive-dimensions';
 
-import Card from './card.js';
+import FeedCard from './feed-card.js';
+import PinnedCard from './pinned-card.js';
 import NetworkService from './../core/network.js';
 import StorageService from './../core/storage.js';
 import AppConstants from './../core/constants';
@@ -82,7 +83,7 @@ class Home extends React.Component {
 
         return this.state.pinned_items.map((item, i) => {
             return (
-                <Card
+                <PinnedCard
                 key={i}
                 updateScreen={this.props.updateScreen}
                 category={item.category}
@@ -90,8 +91,6 @@ class Home extends React.Component {
                 title={item.title}
                 body={item.body}
                 id={item.id}
-                height={responsiveWidth(30)}
-                width={responsiveWidth(30)}
                 />
             );
         });
@@ -104,7 +103,7 @@ class Home extends React.Component {
 
         return this.state.feed_items.map((item, i) => {
             return (
-                <Card
+                <FeedCard
                 key={i}
                 updateScreen={this.props.updateScreen}
                 category={item.sectionName}
@@ -112,8 +111,6 @@ class Home extends React.Component {
                 title={item.webTitle}
                 body={item.fields && item.fields.body}
                 id={item.id}
-                height={responsiveWidth(80)}
-                width={responsiveWidth(80)}
                 />
             );
         });
@@ -126,7 +123,7 @@ class Home extends React.Component {
             {this.renderPinnedItems()}
             </ScrollView>
             <View style={styles.feed}>
-            <Text style={styles.feedText}>{'The Guardian News'}</Text>
+            <Text>{'The Guardian News'}</Text>
             </View>
             <ScrollView onMomentumScrollEnd={() => this.requestFeedItems(++this.offset, true)}>
             {this.renderFeedItems()}
@@ -139,11 +136,11 @@ class Home extends React.Component {
 const styles = StyleSheet.create({
     container: {
         marginTop: responsiveHeight(2.5),
-        backgroundColor: 'grey',
         alignItems: 'center',
         justifyContent: 'center'
     },
     feed: {
+        marginTop: responsiveHeight(1),
         backgroundColor: 'green',
         width: responsiveWidth(100),
         height: responsiveHeight(3),

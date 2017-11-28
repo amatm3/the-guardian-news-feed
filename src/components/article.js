@@ -21,7 +21,16 @@ import AppConstants from './../core/constants.js';
 
 class Article extends React.Component {
 
+    constructor() {
+        super();
+
+        this.state = {
+            pinText: 'Pin to home',
+        }
+    }
+
     componentDidMount() {
+        this.checkPinStatus(this.props.params.id)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     }
 
@@ -36,6 +45,23 @@ class Article extends React.Component {
         return true;
     }
 
+    checkPinStatus = (id) => {
+        StorageService.getPinnedItem().then(items => {
+            console.log(items.length);
+            if(items.length === 0) return null;
+            let pinned_items = items;
+            pinned_items.forEach(item => {
+                if(item.id === id){
+                    console.log(item.id);
+                    console.log(id);
+                    this.setState({
+                        pinText: 'UnPin from home'
+                    });
+                }
+            })
+        });
+    }
+
     handleOnPressPin = () => {
         if (!this.props.params) return null;
             let pinned_item = {
@@ -45,13 +71,18 @@ class Article extends React.Component {
                 category: this.props.params.category,
                 id: this.props.params.id
             };
-        StorageService.addPinnedItem(pinned_item);
-    }
-
-    handleOnPressUnPin = () => {
-        if (!this.props.params) return null;
-        let pinned_item_id = this.props.params.id;
-        StorageService.removePinnedItem(pinned_item_id);
+        if(this.state.pinText === 'Pin to home') {
+            StorageService.addPinnedItem(pinned_item);
+            this.setState({
+                pinText: 'UnPin from home'
+            });
+        }
+        if(this.state.pinText === 'UnPin from home') {
+            StorageService.removePinnedItem(pinned_item.id);
+            this.setState({
+                pinText: 'Pin to home'
+            });
+        }
     }
 
     render() {
@@ -67,10 +98,7 @@ class Article extends React.Component {
             <Image style={styles.image} source={{uri: this.props.params.thumbnail}}/>
             <View style={styles.pinView}>
             <TouchableOpacity style={styles.pin} onPress={this.handleOnPressPin}>
-            <Text>{'Pin to Home'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.unPin} onPress={this.handleOnPressUnPin}>
-            <Text>{'UnPin from Home'}</Text>
+            <Text>{this.state.pinText}</Text>
             </TouchableOpacity>
             </View>
             <WebView
@@ -112,29 +140,17 @@ class Article extends React.Component {
         },
         pinView: {
             marginTop: responsiveHeight(0.5),
-            width: responsiveWidth(85),
+            width: responsiveWidth(35),
             height: responsiveHeight(4),
-            flexDirection: 'row',
+            borderWidth: responsiveWidth(1),
+            borderRadius: responsiveHeight(2),
+            borderColor: 'black',
             alignItems: 'center',
             justifyContent: 'center'
         },
         pin: {
-            borderRadius: responsiveHeight(2),
-            marginLeft: responsiveWidth(3.5),
-            marginRight: responsiveWidth(1.5),
             width: responsiveWidth(35),
             height: responsiveHeight(3),
-            backgroundColor: 'green',
-            alignItems: 'center',
-            justifyContent: 'center'
-        },
-        unPin: {
-            borderRadius: responsiveHeight(2),
-            marginLeft: responsiveWidth(1.5),
-            marginRight: responsiveWidth(3.5),
-            width: responsiveWidth(35),
-            height: responsiveHeight(3),
-            backgroundColor: 'red',
             alignItems: 'center',
             justifyContent: 'center'
         }

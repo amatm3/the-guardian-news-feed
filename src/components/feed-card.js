@@ -15,7 +15,7 @@ import {
 
 import AppConstants from './../core/constants.js';
 
-class Card extends React.Component {
+class FeedCard extends React.Component {
 
     handleOnPress = () => {
         this.props.updateScreen(AppConstants.screens.ARTICLE, this.props);
@@ -24,12 +24,6 @@ class Card extends React.Component {
 
     render() {
         const { image } = styles;
-        if (this.props.height) {
-            image.height = this.props.height;
-        }
-        if (this.props.width) {
-            image.width = this.props.width;
-        }
         if (!this.props.thumbnail) {
             this.props.thumbnail = AppConstants.DEFAULT_PHOTO_URL;
         }
@@ -75,4 +69,4 @@ const styles = {
     }
 };
 
-module.exports = Card;
+module.exports = FeedCard;
